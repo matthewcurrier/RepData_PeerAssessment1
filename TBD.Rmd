@@ -1,0 +1,22 @@
+---
+title: "TBD"
+author: "Matthew Currier"
+date: "December 7, 2015"
+output: html_document
+---
+
+First unzip the data set.
+```{r}
+unzip ("activity.zip")
+```
+
+Then read the activity csv file into R.
+```{r}
+act <- read.csv("activity.csv", stringsAsFactors = FALSE)
+```
+
+Time do some clean up. The 'date' field has been loaded as a char. Let's convert it to a date.
+```{r}
+
+act[,"date"] <- as.Date(act$date, "%Y-%m-%d")
+```
