@@ -1,25 +1,188 @@
 ---
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
+title: "TBD"
+author: "Matthew Currier"
+date: "December 7, 2015"
+output: html_document
 ---
+# Loading and preprocessing the data
+First unzip the data set.
+```{r}
+unzip ("activity.zip")
+```
+
+Then read the activity.csv file into R.
+```{r}
+act <- read.csv("activity.csv", stringsAsFactors = FALSE)
+```
+
+Time do some clean up. The 'date' field has been loaded as a char. Let's convert it to a date.
+```{r}
+
+act[, "date"] <- as.Date(act$date, "%Y-%m-%d")
+```
 
 
-## Loading and preprocessing the data
+# Total Steps Taken Per Day
+
+```{r tot_steps_per_day, warning=FALSE, message=FALSE}
+library(dplyr)
+
+act_tot_steps_per_day <- act %>% group_by(date) %>% summarise(tot_steps_for_day=sum(steps, na.rm=TRUE))
+print(act_tot_steps_per_day)
+```
+
+### Histogram of Total Steps Take per Day
+
+```{r hist_tot_steps_per_day, echo=TRUE}
+hist(act_tot_steps_per_day$tot_steps_for_day, breaks = 30, 
+     main = "Histogram of Total Steps Per Day", xlab = "Total Steps")
+```
+
+### Mean and Median of the Total Number of Steps Taken per Day
+
+The *mean* total number of steps taken per day is `r mean(act_tot_steps_per_day$tot_steps_for_day, na.rm = TRUE)`.
+
+The *median* total number of steps taken per day is `r median(act_tot_steps_per_day$tot_steps_for_day, na.rm = TRUE)`.
+
+# Average Daily Activity Pattern
+
+
+```{r}
+library(dplyr)
+
+act_group_by_interval <- act %>% group_by(interval)
+
+result <- act_group_by_interval %>% summarise(avg_steps_taken_for_int=mean(steps, na.rm=TRUE))
+with(result, plot(interval, avg_steps_taken_for_int, ylab = "Avg. Steps For Interval", xlab = "Interval", main = "Avg. Daily Activity Plot"))
+
+max_int <- subset(result, avg_steps_taken_for_int==max(avg_steps_taken_for_int))
+print(max_int)
+
+```
+
+The 5 minute interval with the **maximum** average number of steps is the **`r max_int$interval`** interval.
+
+# Imputing Missing Values
+
+### Part 1 - Total Complete Cases in Data Set
+
+The following code will help us identify complete cases in our data set.
+
+```{r complete_cases}
+act[, "complete_case"] <- complete.cases(act)
+act4 <- subset(act, complete.cases(act))
+nrow(act4)
+```
+
+There are **`r nrow(act4)`** complete cases.
+
+### Part 2 - Strategy for Filling In Missing Values
+
+To fill in missing values, this report will use the average daily total steps for a given interval. To join the data, the sqldf package will be used.
+
+```{r, warning = FALSE}
+
+library(sqldf)
+query <- " SELECT a.date, 
+              a.interval, 
+              a.steps, 
+              r.avg_steps_taken_for_int 
+          FROM act a 
+              LEFT JOIN result r 
+                   ON a.interval = r.interval"
+
+new_df <- sqldf(query)
+head(new_df)
+
+
+new_df[, "steps"] <- as.numeric(new_df$steps)
+
+new_df[, "is_na"] <- is.na(new_df$steps)
+
+
+       
+for (i in 1:nrow(new_df)) {
+  if(is.na(new_df[i, 3])==TRUE) {
+   new_df[i, 3] <- new_df[i, "avg_steps_taken_for_int"]
+  }
+}
+                               
+print(head(new_df))                               
+                     
+
+```
+
+
+```{r tot_steps_per_day_imputed, warning=FALSE, message=FALSE}
+act_tot_steps_per_day <- new_df %>% group_by(date) %>% summarise(tot_steps_for_day=sum(steps, na.rm=TRUE))
+print(act_tot_steps_per_day)
+```
+
+```{r hist_tot_steps_per_day_imputed, echo=TRUE}
+hist(act_tot_steps_per_day$tot_steps_for_day, breaks = 30, 
+     main = "Histogram of Total Steps Per Day (using imputed values)", xlab = "Total Steps")
+```
+
+The **mean** for the dataset, using imputed values, is ...
+
+```{r}
+mean(act_tot_steps_per_day$tot_steps_for_day)
+```
+
+The **median** for the dataset, using imputed values, is ...
+```{r}
+median(act_tot_steps_per_day$tot_steps_for_day)
+```
+
+Comparing how the total steps per day changes when using imputed values, we note that:
+
+1. The mean and median for the imputed data set is higher.
+2. The median for the imputed data set is the same as the mean in the imputed data set.
+
+
+# Differences in Activity Patterns Between Weekdays and Weekends
+
+Before we can create the the chart, we have to extract the weekday from the date, determine if weekday occurs during the weekend, and create a new factor variable that identifies weekends and weekdays.
+
+```{r weekends}
+new_df$dow <- weekdays(new_df$date)
+
+weekend <- c("Saturday", "Sunday")
+weekday <- c("Monday",
+             "Tuesday",
+             "Wednesday",
+             "Thursday",
+             "Friday")
+
+# Create empty column to store our results
+new_df[, "status"] <- ''
 
 
 
-## What is mean total number of steps taken per day?
+wkend <- new_df$dow %in% weekend
+new_df$status[wkend] <- "Weekend"
+
+wkday <- new_df$dow %in% weekday
+new_df$status[wkday] <- "Weekday"
+
+```
+
+Now, let's take this data and create a plot of weekend vs weekday activity.
+
+```{r}
+
+library(lattice)
+attach(new_df)
+
+xyplot(steps ~ interval | status, 
+  	main="Scatterplots", 
+   ylab="Steps", 
+   xlab="Interval", 
+   t="l", 
+   columns=1,
+   layout=c(1,2))
+
+```
 
 
 
-## What is the average daily activity pattern?
-
-
-
-## Imputing missing values
-
-
-
-## Are there differences in activity patterns between weekdays and weekends?
