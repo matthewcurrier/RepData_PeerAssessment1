@@ -31,25 +31,6 @@ act[, "date"] <- as.Date(act$date, "%Y-%m-%d")
 library(dplyr)
 
 act_tot_steps_per_day <- act %>% group_by(date) %>% summarise(tot_steps_for_day=sum(steps, na.rm=TRUE))
-print(act_tot_steps_per_day)
-```
-
-```
-## Source: local data frame [61 x 2]
-## 
-##          date tot_steps_for_day
-##        (date)             (int)
-## 1  2012-10-01                 0
-## 2  2012-10-02               126
-## 3  2012-10-03             11352
-## 4  2012-10-04             12116
-## 5  2012-10-05             13294
-## 6  2012-10-06             15420
-## 7  2012-10-07             11015
-## 8  2012-10-08                 0
-## 9  2012-10-09             12811
-## 10 2012-10-10              9900
-## ..        ...               ...
 ```
 
 ### Histogram of Total Steps Take per Day
@@ -85,15 +66,6 @@ with(result, plot(interval, avg_steps_taken_for_int, ylab = "Avg. Steps For Inte
 
 ```r
 max_int <- subset(result, avg_steps_taken_for_int==max(avg_steps_taken_for_int))
-print(max_int)
-```
-
-```
-## Source: local data frame [1 x 2]
-## 
-##   interval avg_steps_taken_for_int
-##      (int)                   (dbl)
-## 1      835                206.1698
 ```
 
 The 5 minute interval with the **maximum** average number of steps is the **835** interval.
@@ -272,7 +244,7 @@ attach(new_df)
 ##     avg_steps_taken_for_int, date, dow, interval, is_na, status,
 ##     steps
 ## 
-## The following objects are masked from new_df (pos = 12):
+## The following objects are masked from new_df (pos = 4):
 ## 
 ##     avg_steps_taken_for_int, date, dow, interval, is_na, status,
 ##     steps
@@ -318,6 +290,11 @@ attach(new_df)
 ##     steps
 ## 
 ## The following objects are masked from new_df (pos = 21):
+## 
+##     avg_steps_taken_for_int, date, dow, interval, is_na, status,
+##     steps
+## 
+## The following objects are masked from new_df (pos = 22):
 ## 
 ##     avg_steps_taken_for_int, date, dow, interval, is_na, status,
 ##     steps
