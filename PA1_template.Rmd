@@ -1,5 +1,5 @@
 ---
-title: "TBD"
+title: "Assignment 1 - Reproducible Research"
 author: "Matthew Currier"
 date: "December 7, 2015"
 output: html_document
@@ -28,7 +28,7 @@ act[, "date"] <- as.Date(act$date, "%Y-%m-%d")
 library(dplyr)
 
 act_tot_steps_per_day <- act %>% group_by(date) %>% summarise(tot_steps_for_day=sum(steps, na.rm=TRUE))
-print(act_tot_steps_per_day)
+
 ```
 
 ### Histogram of Total Steps Take per Day
@@ -56,7 +56,7 @@ result <- act_group_by_interval %>% summarise(avg_steps_taken_for_int=mean(steps
 with(result, plot(interval, avg_steps_taken_for_int, ylab = "Avg. Steps For Interval", xlab = "Interval", main = "Avg. Daily Activity Plot"))
 
 max_int <- subset(result, avg_steps_taken_for_int==max(avg_steps_taken_for_int))
-print(max_int)
+
 
 ```
 
@@ -92,7 +92,7 @@ query <- " SELECT a.date,
                    ON a.interval = r.interval"
 
 new_df <- sqldf(query)
-head(new_df)
+
 
 
 new_df[, "steps"] <- as.numeric(new_df$steps)
@@ -169,18 +169,18 @@ new_df$status[wkday] <- "Weekday"
 
 Now, let's take this data and create a plot of weekend vs weekday activity.
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 
 library(lattice)
-attach(new_df)
 
-xyplot(steps ~ interval | status, 
+
+with(new_df, xyplot(steps ~ interval | status, 
   	main="Scatterplots", 
    ylab="Steps", 
    xlab="Interval", 
    t="l", 
    columns=1,
-   layout=c(1,2))
+   layout=c(1,2)))
 
 ```
 

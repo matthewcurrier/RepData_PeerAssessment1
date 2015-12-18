@@ -1,5 +1,5 @@
 ---
-title: "TBD"
+title: "Assignment 1 - Reproducible Research"
 author: "Matthew Currier"
 date: "December 7, 2015"
 output: html_document
@@ -105,20 +105,9 @@ query <- " SELECT a.date,
                    ON a.interval = r.interval"
 
 new_df <- sqldf(query)
-head(new_df)
-```
 
-```
-##         date interval steps avg_steps_taken_for_int
-## 1 2012-10-01        0    NA               1.7169811
-## 2 2012-10-01        5    NA               0.3396226
-## 3 2012-10-01       10    NA               0.1320755
-## 4 2012-10-01       15    NA               0.1509434
-## 5 2012-10-01       20    NA               0.0754717
-## 6 2012-10-01       25    NA               2.0943396
-```
 
-```r
+
 new_df[, "steps"] <- as.numeric(new_df$steps)
 
 new_df[, "is_na"] <- is.na(new_df$steps)
@@ -235,79 +224,15 @@ Now, let's take this data and create a plot of weekend vs weekday activity.
 
 ```r
 library(lattice)
-attach(new_df)
-```
 
-```
-## The following objects are masked from new_df (pos = 3):
-## 
-##     avg_steps_taken_for_int, date, dow, interval, is_na, status,
-##     steps
-## 
-## The following objects are masked from new_df (pos = 4):
-## 
-##     avg_steps_taken_for_int, date, dow, interval, is_na, status,
-##     steps
-## 
-## The following objects are masked from new_df (pos = 13):
-## 
-##     avg_steps_taken_for_int, date, dow, interval, is_na, status,
-##     steps
-## 
-## The following objects are masked from new_df (pos = 14):
-## 
-##     avg_steps_taken_for_int, date, dow, interval, is_na, status,
-##     steps
-## 
-## The following objects are masked from new_df (pos = 15):
-## 
-##     avg_steps_taken_for_int, date, dow, interval, is_na, status,
-##     steps
-## 
-## The following objects are masked from new_df (pos = 16):
-## 
-##     avg_steps_taken_for_int, date, dow, interval, is_na, status,
-##     steps
-## 
-## The following objects are masked from new_df (pos = 17):
-## 
-##     avg_steps_taken_for_int, date, dow, interval, is_na, status,
-##     steps
-## 
-## The following objects are masked from new_df (pos = 18):
-## 
-##     avg_steps_taken_for_int, date, dow, interval, is_na, status,
-##     steps
-## 
-## The following objects are masked from new_df (pos = 19):
-## 
-##     avg_steps_taken_for_int, date, dow, interval, is_na, status,
-##     steps
-## 
-## The following objects are masked from new_df (pos = 20):
-## 
-##     avg_steps_taken_for_int, date, dow, interval, is_na, status,
-##     steps
-## 
-## The following objects are masked from new_df (pos = 21):
-## 
-##     avg_steps_taken_for_int, date, dow, interval, is_na, status,
-##     steps
-## 
-## The following objects are masked from new_df (pos = 22):
-## 
-##     avg_steps_taken_for_int, date, dow, interval, is_na, status,
-##     steps
-```
 
-```r
-xyplot(steps ~ interval | status, 
+with(new_df, xyplot(steps ~ interval | status, 
   	main="Scatterplots", 
    ylab="Steps", 
    xlab="Interval", 
    t="l", 
    columns=1,
-   layout=c(1,2))
+   layout=c(1,2)))
 ```
 
 ![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8-1.png) 
