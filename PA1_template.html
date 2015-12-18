@@ -303,15 +303,7 @@ nrow(act4)
 <p>To fill in missing values, this report will use the average daily total steps for a given interval. To join the data, the sqldf package will be used.</p>
 
 <pre><code class="r">library(sqldf)
-</code></pre>
-
-<pre><code>## Loading required package: gsubfn
-## Loading required package: proto
-## Loading required package: RSQLite
-## Loading required package: DBI
-</code></pre>
-
-<pre><code class="r">query &lt;- &quot; SELECT a.date, 
+query &lt;- &quot; SELECT a.date, 
               a.interval, 
               a.steps, 
               r.avg_steps_taken_for_int 
@@ -320,12 +312,7 @@ nrow(act4)
                    ON a.interval = r.interval&quot;
 
 new_df &lt;- sqldf(query)
-</code></pre>
-
-<pre><code>## Loading required package: tcltk
-</code></pre>
-
-<pre><code class="r">head(new_df)
+head(new_df)
 </code></pre>
 
 <pre><code>##         date interval steps avg_steps_taken_for_int
@@ -441,7 +428,7 @@ new_df$status[wkday] &lt;- &quot;Weekday&quot;
 attach(new_df)
 </code></pre>
 
-<pre><code>## The following objects are masked from new_df (pos = 11):
+<pre><code>## The following objects are masked from new_df (pos = 3):
 ## 
 ##     avg_steps_taken_for_int, date, dow, interval, is_na, status,
 ##     steps
@@ -487,6 +474,11 @@ attach(new_df)
 ##     steps
 ## 
 ## The following objects are masked from new_df (pos = 20):
+## 
+##     avg_steps_taken_for_int, date, dow, interval, is_na, status,
+##     steps
+## 
+## The following objects are masked from new_df (pos = 21):
 ## 
 ##     avg_steps_taken_for_int, date, dow, interval, is_na, status,
 ##     steps
